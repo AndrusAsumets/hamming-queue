@@ -1,6 +1,8 @@
 import fs from 'fs';
 import syncRequest from 'sync-request';
 import request from 'request';
+var neo4j = require('node-neo4j');
+var db = new neo4j('localhost:7474');
 
 //local imports
 import { spotify } from './src/spotify';
@@ -96,9 +98,12 @@ router.post('/complete', koaBody,
   function *(next) {
     console.log('/complete');
 
-    const data = this.request.body.data;
-    const job = data.job;
-    const id = data.id;
+    const message = this.request.body;
+    console.log(message);
+    const job = message.job;
+    const id = message.id;
+    const result = message.result;
+    console.log(result);
 
     for (let i = 0; i < workingQueue.length; i++) {
       if (workingQueue[i].id == id) {
@@ -119,3 +124,15 @@ app.listen(port);
 
 console.log('Head is listening on', port);
 
+/*
+function saveMeta(value, element) {
+  var query = "CREATE (" + element + ":Meta {meta:'" + element + "',album_type:'" + album_type + "',available_markets:'" + available_markets + "',external_urls:'" + external_urls + "',href:'" + href + "',id:'" + id + "',images:'" + images + "',name:'" + name + "',type:'" + type + "',uri:'" + uri + "',value:'" + value + "'})";
+
+  db.cypherQuery(query, function(err, result) {
+      if(err) console.log(err);
+      console.log(element, value);
+
+      
+  });
+}
+*/
