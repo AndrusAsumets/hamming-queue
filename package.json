@@ -15,7 +15,7 @@
     "kue": "^0.10.5",
     "node-neo4j": "^2.0.3",
     "request": "^2.67.0",
-    "sync-request": "^3.0.0",
+    "sync-request": "^3.0.0"
   },
   "devDependencies": {}
 }
