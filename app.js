@@ -84,7 +84,7 @@ async function createActions() {
     }
   }
 }
-setInterval(function() { createActions() }, 0);
+setInterval(function() { createActions() }, 100);
 
 //web server
 const port = 6000;
