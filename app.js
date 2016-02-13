@@ -53,7 +53,7 @@ var workers = [
   },
   {
     name: 'digitalocean',
-    host: 'http://188.166.74.20:6001',
+    host: 'http://showlance.com:6001',
     status: ''
   }
 ]
@@ -96,10 +96,12 @@ router.post('/complete', koaBody,
   function *(next) {
     console.log('/complete');
 
-    const job = this.request.body;
+    const data = this.request.body.data;
+    const job = data.job;
+    const id = data.id;
 
     for (let i = 0; i < workingQueue.length; i++) {
-      if (workingQueue[i].id == job.id) {
+      if (workingQueue[i].id == id) {
         workingQueue.splice(0, i);
         completedQueue.push(job);
 
