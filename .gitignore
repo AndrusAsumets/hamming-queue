@@ -12,3 +12,6 @@ data/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+
+.workers.json
