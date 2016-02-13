@@ -98,7 +98,6 @@ router.post('/complete', koaBody,
     const job = message.job;
     const id = message.id;
     const result = message.result;
-    console.log(result);
 
     for (let i = 0; i < workingQueue.length; i++) {
       if (workingQueue[i].id == id) {
