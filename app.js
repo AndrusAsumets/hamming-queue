@@ -1,8 +1,12 @@
+require('dotenv').config();
+
 import fs from 'fs';
 import syncRequest from 'sync-request';
 import request from 'request';
 var neo4j = require('node-neo4j');
 var db = new neo4j('localhost:7474');
+let workers = JSON.parse(fs.readFileSync('.workers.json', 'utf8'));
+const host = 'http://' + process.env.HOST + ':' + process.env.PORT;
 
 //local imports
 import { spotify } from './src/spotify';
@@ -35,7 +39,7 @@ async function checkActionQueue() {
 
       elements.forEach(element => {
         const id = (new Date).getTime() + '_' + String(Math.random()).split('.')[1];
-        actionQueue.push({ job: element, id: id });
+        actionQueue.push({ job: element, id: id, host: host });
       });
 
       console.log('Successfully retrieved ' + elements.length + ' from Spotify. Offset is at ' + spotifyOffset + '.');
@@ -47,26 +51,18 @@ async function checkActionQueue() {
 
 checkActionQueue();
 
-var workers = [
-  {
-    name: 'localhost',
-    host: 'http://127.0.0.1:6001',
-    status: ''
-  },
-  {
-    name: 'digitalocean',
-    host: 'http://showlance.com:6001',
-    status: ''
-  }
-]
-
 function createActions() {
   if (actionQueue.length == 0) return;
 
   for (let i = 0; i < workers.length; i++) {
     const job = actionQueue[0];
     const host = workers[i].host;
-    const res = syncRequest('POST', host + '/working');
+
+    let res;
+    try {
+      res = syncRequest('POST', host + '/working');
+    } catch(err) { continue };
+
     const body = JSON.parse(res.getBody('utf8'));
     const status = body.status;
 
@@ -90,7 +86,6 @@ function createActions() {
 setInterval(function() { createActions() }, 100);
 
 //web server
-const port = 6000;
 let app = require('koa')();
 let router = require('koa-router')();
 let koaBody = require('koa-body')();
@@ -121,9 +116,9 @@ router.post('/complete', koaBody,
 
 app.use(router.routes());
 
-app.listen(port);
+app.listen(process.env.PORT);
 
-console.log('Head is listening on', port);
+console.log('Head is listening on', process.env.PORT);
 
 /*
 function saveMeta(value, element) {
