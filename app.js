@@ -60,10 +60,9 @@ var workers = [
   }
 ]
 
-async function createActions() {
+function createActions() {
   if (actionQueue.length == 0) return;
 
-  //check worker availability
   for (let i = 0; i < workers.length; i++) {
     const job = actionQueue[0];
     const host = workers[i].host;
@@ -76,13 +75,15 @@ async function createActions() {
 
       request({ uri: host + '/job', method: 'POST', json: job }, function (error, response, body) {
         if (!error && response.statusCode == 200) {
-          actionQueue.splice(0, 1);
+          for (let j = 0; j < actionQueue.length; j++) {
+            if (actionQueue[j].id == job.id) {
+              actionQueue.splice(0, i);
+            }
+          }
 
           workingQueue.push(job);
         }
       })
-
-      break;
     }
   }
 }
