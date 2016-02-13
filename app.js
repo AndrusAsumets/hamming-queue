@@ -95,7 +95,6 @@ router.post('/complete', koaBody,
     console.log('/complete');
 
     const message = this.request.body;
-    console.log(message);
     const job = message.job;
     const id = message.id;
     const result = message.result;
