@@ -37,6 +37,10 @@ export function spotify(data) {
 
 					fetchElements(options);
 				}
+
+				else {
+					setTimeout(function() { querySpotify(url + spotifyOffset); }, 5000);
+				}
 			});
 		}
 
@@ -45,15 +49,15 @@ export function spotify(data) {
 			var duration = 0;
 
 			request.get(options, function(error, response, body) {
-				if (error) {
-					return console.log(error);
+				if (!error || body.albums) {
+					var elements = body.albums.items;
+
+					resolve({ error: null, data: elements});
 				}
 
-				if(!body.albums) return;
-
-				var elements = body.albums.items;
-
-				resolve({ error: null, data: elements});
+				else {
+					setTimeout(function() { querySpotify(url + spotifyOffset); }, 5000);
+				}
 			});
 		}
 
